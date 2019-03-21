@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         return deviceSleepTime > minSleepTime;
     }
 
+
     public void saveTime() {
         ContentValues values = new ContentValues();
 
@@ -57,10 +58,29 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        if (checkDeviceIdle() == true && deviceWaketime > deviceSleepTime) {
-            values.put(SleepEntry.COLUMN_SLEEP_END_TIME,deviceWakeTime);
+
+
+
+
+        //to get device wake time from that class
+        SleepBroadcast slp = new SleepBroadcast();
+//        slp.initializeWakeTime();
+        long wakeTime = slp.deviceWakeTime;
+
+
+
+
+
+
+
+
+        if (checkDeviceIdle() == true && wakeTime > deviceSleepTime) {
+            values.put(SleepEntry.COLUMN_SLEEP_END_TIME, wakeTime);
 
         }
+
+
+
 
 
         Uri newUri = getContentResolver().insert(SleepEntry.CONTENT_URI, values);

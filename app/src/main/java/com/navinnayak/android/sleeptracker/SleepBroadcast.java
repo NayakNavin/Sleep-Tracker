@@ -22,6 +22,7 @@ public class SleepBroadcast extends BroadcastReceiver {
 
     }
     public void initializeWakeTime(){
+
         deviceWakeTime = System.currentTimeMillis();
 
     }

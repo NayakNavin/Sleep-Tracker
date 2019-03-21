@@ -23,9 +23,10 @@ public class SleepService extends Service {
         // again automatically
         return START_REDELIVER_INTENT;
     }
+
     /**
      * method to schedule the app to run at scheduled time
-     * **/
+     **/
     public void beginAppInBackground(Context context) {
         alarmMgr = (AlarmManager) getSystemService(ALARM_SERVICE);
         Intent intent = new Intent(context, SleepService.class);
@@ -34,8 +35,8 @@ public class SleepService extends Service {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 16);
-        calendar.set(Calendar.MINUTE, 10);
+        calendar.set(Calendar.HOUR_OF_DAY, 13);
+        calendar.set(Calendar.MINUTE, 59);
 
 
 //// With setInexactRepeating(), you have to use one of the AlarmManager interval
@@ -52,10 +53,10 @@ public class SleepService extends Service {
 
     /**
      * method to stop the service
-     * **/
+     **/
     @Override
     public void onDestroy() {
 
-        this.stopSelf();
+
     }
 }
