@@ -1,51 +1,230 @@
 package com.navinnayak.android.sleeptracker;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
+import android.app.KeyguardManager;
+import android.app.Notification;
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Intent;
-import android.icu.util.Calendar;
+import android.database.Cursor;
+import android.hardware.fingerprint.FingerprintManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.navinnayak.android.sleeptracker.data.SleepContract;
+import com.navinnayak.android.sleeptracker.data.SleepContract.SleepEntry;
+
+import static com.navinnayak.android.sleeptracker.AppConstants.NOTIFICATION_CHANNEL_ID;
+import static com.navinnayak.android.sleeptracker.AppConstants.NOTIFICATION_ID;
+import static com.navinnayak.android.sleeptracker.data.SleepContract.BASE_CONTENT_URI;
 
 public class SleepService extends Service {
-    private AlarmManager alarmMgr;
-    private PendingIntent alarmIntent;
+    private static final String TAG = SleepService.class.getCanonicalName();
+    private boolean check = false;
+    private String actionToPerform;
+    private Uri mCurrentSleepUri;
+    private long sleepStartTime;
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // Query the database and show alarm if it applies
+        super.onStartCommand(intent, flags, startId);
+        actionToPerform = intent.getExtras().getString("UserAction");
+        Log.d(TAG, actionToPerform);
+        calculateSleep();
+        stopService();
 
-        // Here you can return one of some different constants.
-        // This one in particular means that if for some reason
-        // this service is killed, we don't want to start it
-        // again automatically
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-        beginAppInBackground();
-        return START_NOT_STICKY;
+            showNotification();
+
+            return START_STICKY;
+        } else {
+            return START_NOT_STICKY;
+        }
+
+    }
+
+
+    @Override
+    public void onCreate() {
+
+    }
+
+
+    /**
+     * Method which calculates sleep time.
+     **/
+    public void calculateSleep() {
+//        Calendar currentTime = Calendar.getInstance();
+//        Calendar calendar = Calendar.getInstance();
+//
+//        currentTime.get(Calendar.HOUR_OF_DAY);
+//        currentTime.get(Calendar.MINUTE);
+//        int currentHour = currentTime.get(Calendar.HOUR_OF_DAY);
+//
+//        calendar.set(Calendar.HOUR_OF_DAY, 21);
+//        calendar.set(Calendar.MINUTE, 0);
+//        int fixedHour = calendar.get(Calendar.HOUR_OF_DAY);
+//
+//        Log.d("time", String.valueOf(currentTime.get(Calendar.HOUR_OF_DAY)));
+//        if (currentHour >= fixedHour) {
+
+        if (isDeviceLocked() && isScreenOff()) {
+            Log.d(TAG, "Service  started  and start time");
+
+            recordStartTime();
+
+        } else if (!isDeviceLocked() || isBiometricsOn()) {
+
+//                if (System.currentTimeMillis() > sleepStartTime + 3600000) {
+
+            recordEndTime();
+
+            Log.d(TAG, "Service  end time ");
+
+
+        }
+//            }
+//        }
+        else {
+            Log.d(TAG, "Service not started since its not the time to start it :P");
+            stopForeground(true);
+            onDestroy();
+        }
+
+
     }
 
     /**
-     * method to schedule the app to run at scheduled time
+     * Method to record Sleep Start Time
+     * and insert into the database.
      **/
-    public void beginAppInBackground() {
-        alarmMgr = (AlarmManager) getSystemService(ALARM_SERVICE);
-        Intent intent = new Intent(this, SleepService.class);
-        alarmIntent = PendingIntent.getService(this, 0, intent, 0);
+    public void recordStartTime() {
+        ContentValues values = new ContentValues();
+        sleepStartTime = System.currentTimeMillis();
+        long sleepLastUpdated = System.currentTimeMillis();
 
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 11);
-        calendar.set(Calendar.MINUTE, 00);
+        values.put(SleepEntry.COLUMN_SLEEP_START_TIME, sleepStartTime);
+        values.put(SleepEntry.COLUMN_LAST_UPDATED, sleepLastUpdated);
+
+        if (mCurrentSleepUri == null) {
 
 
-//// With setInexactRepeating(), you have to use one of the AlarmManager interval
-//// constants--in this case, AlarmManager.INTERVAL_DAY.
-        alarmMgr.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, alarmIntent);
+            Uri newUri = getContentResolver().insert(SleepEntry.CONTENT_URI, values);
+            if (newUri == null) {
+                Toast.makeText(this, "not saved",
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "saved",
+                        Toast.LENGTH_SHORT).show();
+
+            }
+        }
+    }
+
+    /**
+     * Method to record Sleep End Time
+     * and update into the database
+     * with corresponding ID
+     **/
+    public void recordEndTime() {
+        ContentValues values = new ContentValues();
+        Cursor latestEntry = getContentResolver().query(SleepEntry.CONTENT_URI, new String[]{SleepEntry._ID}, null, null, "last_updated DESC LIMIT 1");
+        if (latestEntry.getCount() > 0 && latestEntry.moveToLast()) {
+            int latestEntryColumnIndex = latestEntry.getColumnIndex(SleepEntry._ID);
+            int latestEntryId = latestEntry.getInt(latestEntryColumnIndex);
+            long sleepEndTime = System.currentTimeMillis();
+
+            Log.d(TAG, "Service  end time is " + sleepEndTime);
+            Log.d(TAG, "Going to append entry with id" + latestEntryId);
+
+            values.put(SleepEntry.COLUMN_SLEEP_END_TIME, sleepEndTime);
+            Uri latestEntryUri = BASE_CONTENT_URI.buildUpon().appendPath(SleepContract.PATH_SLEEP).appendPath(String.valueOf(latestEntryId)).build();
+            getContentResolver().update(latestEntryUri, values, null, null);
+        }
+
 
     }
+
+    /**
+     * Method to check if the device is locked/unlocked with keyguard.
+     * (pin, password, or pattern )
+     **/
+    public boolean isDeviceLocked() {
+        KeyguardManager keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+        if (keyguardManager.isDeviceLocked()) {
+
+            //it is locked
+            Log.d(TAG, "locked with keyguard");
+            return true;
+
+        } else {
+            Log.d(TAG, "unlocked with keyguard");
+            return false;
+            //it is not locked
+        }
+
+    }
+
+    /**
+     * Method to check if the device is locked/unlocked with biometrics.
+     * (fingerprints )
+     *
+     **/
+    public boolean isBiometricsOn() {
+        FingerprintManager fingerprint = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+        if (fingerprint.hasEnrolledFingerprints()) {
+            Log.d(TAG, "unlocked with fingerprint");
+            return true;
+        } else {
+            Log.d(TAG, "locked with fingerprint");
+            return false;
+        }
+
+
+    }
+
+    /**
+     * Method to which returns boolean value for Screen ON/OFF activity
+     * <p>
+     * returns true if Screen Off
+     * returns false if Screen ON
+     **/
+    public boolean isScreenOff() {
+        return actionToPerform.equals(Intent.ACTION_SCREEN_OFF);
+
+
+    }
+
+
+    public void stopService() {
+
+        Cursor c = getContentResolver().query(SleepEntry.CONTENT_URI, null, null, null, null);
+
+        Log.d(TAG, String.valueOf(c.getCount()));
+        if (c.getCount() > 0 && c.moveToLast()) {
+
+            // Find the columns of sleep attributes that we're interested in
+            int startTimeColumnIndex = c.getColumnIndex(SleepEntry.COLUMN_SLEEP_START_TIME);
+            int endTimeColumnIndex = c.getColumnIndex(SleepEntry.COLUMN_SLEEP_END_TIME);
+
+            int startTime = c.getInt(startTimeColumnIndex);
+            int endTime = c.getInt(endTimeColumnIndex);
+            c.close();
+
+
+            if (startTime != 0 && endTime != 0) {
+                onDestroy();
+                stopForeground(false);
+            }
+        }
+    }
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -57,7 +236,27 @@ public class SleepService extends Service {
      **/
     @Override
     public void onDestroy() {
+        super.onDestroy();
+        stopSelf();
+
+    }
+
+    /**
+     * Method which shows notification while the service is active
+     * Notifications shown for devices with Android version Oreo and above
+     **/
+    private void showNotification() {
+
+
+        Notification notification = new NotificationCompat.Builder(SleepService.this, NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("Sleep")
+                .setContentText("Service is running background")
+                .build();
+        startForeground(NOTIFICATION_ID, notification);
 
 
     }
+
+
 }

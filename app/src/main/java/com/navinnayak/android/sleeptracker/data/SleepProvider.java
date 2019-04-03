@@ -13,8 +13,8 @@ import com.navinnayak.android.sleeptracker.data.SleepContract.SleepEntry;
 
 public class SleepProvider extends ContentProvider {
 
-    private static final int SLEEPS = 100;
-    private static final int SLEEP_ID = 101;
+    public static final int SLEEPS = 100;
+    public static final int SLEEP_ID = 101;
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
@@ -63,7 +63,6 @@ public class SleepProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues contentValues) {
         final int match = sUriMatcher.match(uri);
         switch (match) {
-
             case SLEEPS:
                 return insertSleep(uri, contentValues);
 
@@ -77,8 +76,6 @@ public class SleepProvider extends ContentProvider {
     }
 
     private Uri insertSleep(Uri uri, ContentValues values) {
-        values.getAsString(SleepEntry.COLUMN_SLEEP_START_TIME);
-        values.getAsString(SleepEntry.COLUMN_SLEEP_END_TIME);
 
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
         long id = database.insert(SleepEntry.TABLE_NAME, null, values);
@@ -120,6 +117,12 @@ public class SleepProvider extends ContentProvider {
             String endTime = values.getAsString(SleepEntry.COLUMN_SLEEP_END_TIME);
             if (endTime == null) {
                 throw new IllegalArgumentException("end time required");
+            }
+        }
+        if (values.containsKey(SleepEntry.COLUMN_LAST_UPDATED)) {
+            String lastUpdated = values.getAsString(SleepEntry.COLUMN_LAST_UPDATED);
+            if (lastUpdated == null) {
+                throw new IllegalArgumentException("last updated required");
             }
         }
 
