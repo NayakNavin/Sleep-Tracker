@@ -7,12 +7,12 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.hardware.fingerprint.FingerprintManager;
+import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.navinnayak.android.sleeptracker.data.SleepContract;
 import com.navinnayak.android.sleeptracker.data.SleepContract.SleepEntry;
@@ -28,7 +28,6 @@ public class SleepService extends Service {
     private Uri mCurrentSleepUri;
     private long sleepStartTime;
 
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
@@ -38,65 +37,49 @@ public class SleepService extends Service {
         stopService();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
             showNotification();
-
             return START_STICKY;
+
         } else {
             return START_NOT_STICKY;
         }
-
     }
-
-
-    @Override
-    public void onCreate() {
-
-    }
-
 
     /**
      * Method which calculates sleep time.
      **/
     public void calculateSleep() {
-//        Calendar currentTime = Calendar.getInstance();
-//        Calendar calendar = Calendar.getInstance();
-//
-//        currentTime.get(Calendar.HOUR_OF_DAY);
-//        currentTime.get(Calendar.MINUTE);
-//        int currentHour = currentTime.get(Calendar.HOUR_OF_DAY);
-//
-//        calendar.set(Calendar.HOUR_OF_DAY, 21);
-//        calendar.set(Calendar.MINUTE, 0);
-//        int fixedHour = calendar.get(Calendar.HOUR_OF_DAY);
-//
-//        Log.d("time", String.valueOf(currentTime.get(Calendar.HOUR_OF_DAY)));
-//        if (currentHour >= fixedHour) {
+        Calendar currentTime = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
 
+        currentTime.get(Calendar.HOUR_OF_DAY);
+        currentTime.get(Calendar.MINUTE);
+        int currentHour = currentTime.get(Calendar.HOUR_OF_DAY);
+
+        calendar.set(Calendar.HOUR_OF_DAY, 21);
+        calendar.set(Calendar.MINUTE, 0);
+        int fixedHour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        int minSleepTime = 3600000;
+
+        Log.d("time", String.valueOf(currentTime.get(Calendar.HOUR_OF_DAY)));
+//        if (currentHour >= fixedHour) {
         if (isDeviceLocked() && isScreenOff()) {
             Log.d(TAG, "Service  started  and start time");
-
             recordStartTime();
-
+//                sleepStartTime = System.currentTimeMillis();
         } else if (!isDeviceLocked() || isBiometricsOn()) {
-
-//                if (System.currentTimeMillis() > sleepStartTime + 3600000) {
-
+//                if (System.currentTimeMillis() > sleepStartTime + minSleepTime) {
+//                    recordStartTime();
             recordEndTime();
-
             Log.d(TAG, "Service  end time ");
-
-
-        }
+//                }
 //            }
-//        }
-        else {
+        } else {
             Log.d(TAG, "Service not started since its not the time to start it :P");
             stopForeground(true);
             onDestroy();
         }
-
-
     }
 
     /**
@@ -108,21 +91,16 @@ public class SleepService extends Service {
         sleepStartTime = System.currentTimeMillis();
         long sleepLastUpdated = System.currentTimeMillis();
 
-
-        values.put(SleepEntry.COLUMN_SLEEP_START_TIME, sleepStartTime);
         values.put(SleepEntry.COLUMN_LAST_UPDATED, sleepLastUpdated);
+        values.put(SleepEntry.COLUMN_SLEEP_START_TIME, sleepStartTime);
 
         if (mCurrentSleepUri == null) {
-
-
             Uri newUri = getContentResolver().insert(SleepEntry.CONTENT_URI, values);
             if (newUri == null) {
-                Toast.makeText(this, "not saved",
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "saved",
-                        Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "insert failed");
 
+            } else {
+                Log.d(TAG, "insert successful");
             }
         }
     }
@@ -145,10 +123,15 @@ public class SleepService extends Service {
 
             values.put(SleepEntry.COLUMN_SLEEP_END_TIME, sleepEndTime);
             Uri latestEntryUri = BASE_CONTENT_URI.buildUpon().appendPath(SleepContract.PATH_SLEEP).appendPath(String.valueOf(latestEntryId)).build();
-            getContentResolver().update(latestEntryUri, values, null, null);
+
+            int rowsAffected = getContentResolver().update(latestEntryUri, values, null, null);
+            if (rowsAffected == 0) {
+                Log.d(TAG, "update failed");
+
+            } else {
+                Log.d(TAG, "update succesfull");
+            }
         }
-
-
     }
 
     /**
@@ -164,29 +147,26 @@ public class SleepService extends Service {
             return true;
 
         } else {
+            //it is not locked
             Log.d(TAG, "unlocked with keyguard");
             return false;
-            //it is not locked
         }
-
     }
 
     /**
      * Method to check if the device is locked/unlocked with biometrics.
      * (fingerprints )
-     *
      **/
     public boolean isBiometricsOn() {
         FingerprintManager fingerprint = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
         if (fingerprint.hasEnrolledFingerprints()) {
             Log.d(TAG, "unlocked with fingerprint");
             return true;
+
         } else {
             Log.d(TAG, "locked with fingerprint");
             return false;
         }
-
-
     }
 
     /**
@@ -197,13 +177,9 @@ public class SleepService extends Service {
      **/
     public boolean isScreenOff() {
         return actionToPerform.equals(Intent.ACTION_SCREEN_OFF);
-
-
     }
 
-
     public void stopService() {
-
         Cursor c = getContentResolver().query(SleepEntry.CONTENT_URI, null, null, null, null);
 
         Log.d(TAG, String.valueOf(c.getCount()));
@@ -213,10 +189,10 @@ public class SleepService extends Service {
             int startTimeColumnIndex = c.getColumnIndex(SleepEntry.COLUMN_SLEEP_START_TIME);
             int endTimeColumnIndex = c.getColumnIndex(SleepEntry.COLUMN_SLEEP_END_TIME);
 
+            // Extract out the value from the Cursor for the given column index
             int startTime = c.getInt(startTimeColumnIndex);
             int endTime = c.getInt(endTimeColumnIndex);
             c.close();
-
 
             if (startTime != 0 && endTime != 0) {
                 onDestroy();
@@ -224,7 +200,6 @@ public class SleepService extends Service {
             }
         }
     }
-
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -238,7 +213,6 @@ public class SleepService extends Service {
     public void onDestroy() {
         super.onDestroy();
         stopSelf();
-
     }
 
     /**
@@ -246,17 +220,11 @@ public class SleepService extends Service {
      * Notifications shown for devices with Android version Oreo and above
      **/
     private void showNotification() {
-
-
         Notification notification = new NotificationCompat.Builder(SleepService.this, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle("Sleep")
                 .setContentText("Service is running background")
                 .build();
         startForeground(NOTIFICATION_ID, notification);
-
-
     }
-
-
 }

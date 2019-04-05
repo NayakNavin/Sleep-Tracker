@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     public void deleteAllEntries() {
         int rowsDeleted = getContentResolver().delete(SleepEntry.CONTENT_URI, null, null);
-        Log.d("MainActivity", rowsDeleted + " rows deleted from sleep database");
+        Log.d("MainActivity.", rowsDeleted + " rows deleted from sleep database");
 
     }
 
