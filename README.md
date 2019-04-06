@@ -20,6 +20,11 @@ Steps for trying out this sample:
 - Open the app, you would see the Sleep Start and End times. 
 
 
+
+    <img src="https://user-images.githubusercontent.com/37023798/55673459-fee91300-58c5-11e9-9cf1-a4e89c134345.png" width="150" hheight="150" >
+
+
+
 ### Additional features provided
 
 
