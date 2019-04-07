@@ -129,7 +129,7 @@ public class SleepService extends Service {
                 Log.d(TAG, "update failed");
 
             } else {
-                Log.d(TAG, "update succesfull");
+                Log.d(TAG, "update successful");
             }
         }
     }

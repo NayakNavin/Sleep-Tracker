@@ -21,13 +21,13 @@ public class StartBroadcastService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        SleepBroadcast receiver = new SleepBroadcast();
+        ScreenStatusReceiver receiver = new ScreenStatusReceiver();
         registerReceiver(receiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-            SleepBroadcast userPresent = new SleepBroadcast();
+            ScreenStatusReceiver userPresent = new ScreenStatusReceiver();
             registerReceiver(userPresent, new IntentFilter(Intent.ACTION_USER_PRESENT));
 
             showNotification();

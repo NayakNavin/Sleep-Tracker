@@ -8,8 +8,8 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 
-public class SleepBroadcast extends BroadcastReceiver {
-
+public class ScreenStatusReceiver extends BroadcastReceiver {
+    private static final String TAG = ScreenStatusReceiver.class.getCanonicalName();
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -18,7 +18,7 @@ public class SleepBroadcast extends BroadcastReceiver {
          * */
 
         if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
-            Log.d("testapppp", "on unlock");
+            Log.d(TAG, "Action performed" + intent.getAction());
         }
 
         Intent serviceIntent = new Intent(context, SleepService.class);

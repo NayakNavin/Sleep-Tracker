@@ -33,10 +33,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             startService(backgroundService);
         }
 
-        ListView sleeLV = findViewById(R.id.list);
+        ListView sleepLV = findViewById(R.id.list);
 
         mCursorAdapter = new SleepCursorAdapter(this, null);
-        sleeLV.setAdapter(mCursorAdapter);
+        sleepLV.setAdapter(mCursorAdapter);
 
         getSupportLoaderManager().initLoader(0, null, this);
 
