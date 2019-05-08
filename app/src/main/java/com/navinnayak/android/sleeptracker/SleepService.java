@@ -56,11 +56,11 @@ public class SleepService extends Service {
         currentTime.get(Calendar.MINUTE);
         int currentHour = currentTime.get(Calendar.HOUR_OF_DAY);
 
-        calendar.set(Calendar.HOUR_OF_DAY, 21);
+        calendar.set(Calendar.HOUR_OF_DAY, 5);
         calendar.set(Calendar.MINUTE, 0);
         int fixedHour = calendar.get(Calendar.HOUR_OF_DAY);
 
-        int minSleepTime = 3600000;
+        int minSleepTime = 1 * 60 * 60 * 1000;
 
         Log.d("time", String.valueOf(currentTime.get(Calendar.HOUR_OF_DAY)));
 //        if (currentHour >= fixedHour) {
@@ -76,6 +76,7 @@ public class SleepService extends Service {
 //                }
 //            }
         } else {
+
             Log.d(TAG, "Service not started since its not the time to start it :P");
             stopForeground(true);
             onDestroy();

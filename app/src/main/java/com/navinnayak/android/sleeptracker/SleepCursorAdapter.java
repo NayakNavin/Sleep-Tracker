@@ -3,6 +3,7 @@ package com.navinnayak.android.sleeptracker;
 import android.content.Context;
 import android.database.Cursor;
 import android.icu.util.Calendar;
+import android.icu.util.TimeZone;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,8 @@ public class SleepCursorAdapter extends CursorAdapter {
 
         // Create a calendar object that will convert the date and time value in milliseconds to date.
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+
         calendar.setTimeInMillis(milliSeconds);
         return formatter.format(calendar.getTime());
     }

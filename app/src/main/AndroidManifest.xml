@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
 
     <application
         android:name=".App"
@@ -14,27 +16,47 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".SetTargetActivity"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
         <provider
             android:name=".data.SleepProvider"
             android:authorities="com.navinnayak.android.sleeptracker"
             android:exported="false" />
 
-        <service
-            android:name=".SleepService"
-            android:enabled="true"
-            android:exported="true" />
 
         <service
             android:name=".StartBroadcastService"
             android:enabled="true"
             android:exported="true" />
+
+        <!--<service-->
+            <!--android:name=".SleepJobService"-->
+            <!--android:enabled="true"-->
+            <!--android:exported="true"-->
+            <!--android:permission="android.permission.BIND_JOB_SERVICE" />-->
+
+        <service
+            android:name=".SleepService"
+            android:enabled="true"
+            android:exported="true"
+
+            />
 
         <receiver
             android:name=".ScreenStatusReceiver"

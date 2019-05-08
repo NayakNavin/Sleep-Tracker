@@ -33,6 +33,8 @@ public class StartBroadcastService extends Service {
             showNotification();
 
         }
+
+
     }
 
     @Override
@@ -56,14 +58,16 @@ public class StartBroadcastService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
 
-        Notification notification = new NotificationCompat.Builder(StartBroadcastService.this, NOTIFICATION_CHANNEL_ID) // don't forget create a notification channel first
+        Notification notification = new NotificationCompat.Builder(StartBroadcastService.this, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(NOTIFICATION_TEXT)
                 .setContentIntent(pendingIntent)
                 .build();
 
+
         startForeground(NOTIFICATION_ID, notification);
+
 
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -71,6 +75,7 @@ public class StartBroadcastService extends Service {
 
 
     }
+
 
     public void onDestroy() {
         super.onDestroy();

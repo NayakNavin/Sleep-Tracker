@@ -8,10 +8,12 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 public class BootDeviceReceiver extends BroadcastReceiver {
+    private static final String TAG = BootDeviceReceiver.class.getCanonicalName();
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
-            Log.d("testapppp", "on unlock");
+            Log.d(TAG, "on boot complete");
 
             Intent serviceIntent = new Intent(context, StartBroadcastService.class);
             serviceIntent.putExtra("UserAction", intent.getAction());

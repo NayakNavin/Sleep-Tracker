@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 
@@ -13,11 +12,8 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        /*Sent when the user is present after
-         * device wakes up (e.g when the keyguard is gone)
-         * */
 
-        if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
+        if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
             Log.d(TAG, "Action performed" + intent.getAction());
         }
 
@@ -25,7 +21,7 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
         serviceIntent.putExtra("UserAction", intent.getAction());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            ContextCompat.startForegroundService(context, serviceIntent);
+            context.startForegroundService(serviceIntent);
         } else {
             context.startService(serviceIntent);
         }
