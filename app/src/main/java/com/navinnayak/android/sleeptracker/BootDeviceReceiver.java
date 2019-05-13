@@ -23,7 +23,6 @@ public class BootDeviceReceiver extends BroadcastReceiver {
             } else {
                 context.startService(serviceIntent);
             }
-
         }
     }
 }

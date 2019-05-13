@@ -16,18 +16,14 @@ public class SleepDbHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-
     @Override
     public void onCreate(SQLiteDatabase db) {
-
         String SQL_CREATE_SLEEP_TABLE = " CREATE TABLE " + SleepEntry.TABLE_NAME + "("
                 + SleepEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + SleepEntry.COLUMN_SLEEP_START_TIME + " TEXT, "
                 + SleepEntry.COLUMN_SLEEP_END_TIME + " TEXT  , "
                 + SleepEntry.COLUMN_LAST_UPDATED + " LONG ); ";
         db.execSQL(SQL_CREATE_SLEEP_TABLE);
-
-
     }
 
     @Override

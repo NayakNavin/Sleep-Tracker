@@ -1,9 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="@dimen/margin_16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +22,7 @@
             android:layout_margin="@dimen/margin_16dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="BedTime"
+            android:text="@string/bedtime"
             android:textAppearance="?android:textAppearanceSearchResultTitle"
             android:textColor="#FFFECE02" />
 
@@ -26,7 +32,7 @@
             android:layout_margin="@dimen/margin_16dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Wake Up"
+            android:text="@string/wake_up"
             android:textAppearance="?android:textAppearanceSearchResultTitle"
             android:textColor="#FFFECE02" />
 
@@ -45,6 +51,7 @@
             android:layout_margin="@dimen/margin_16dp"
             android:layout_weight="1"
             android:gravity="center"
+            android:text="@string/default_time"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="#FFF" />
 
@@ -55,7 +62,7 @@
             android:layout_margin="@dimen/margin_16dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/app_name"
+            android:text="@string/default_time"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="#FFF" />
 
@@ -80,13 +87,12 @@
         android:textAppearance="?android:textAppearanceMedium"
         android:textColor="#FFF" />
 
-
     <Button
         android:id="@+id/done"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_margin="@dimen/margin_16dp"
-        android:text="done" />
+        android:text="@string/done" />
 
 </LinearLayout>

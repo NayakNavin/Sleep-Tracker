@@ -19,16 +19,18 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".SetTargetActivity"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -39,24 +41,16 @@
             android:authorities="com.navinnayak.android.sleeptracker"
             android:exported="false" />
 
-
         <service
             android:name=".StartBroadcastService"
             android:enabled="true"
             android:exported="true" />
 
-        <!--<service-->
-            <!--android:name=".SleepJobService"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="true"-->
-            <!--android:permission="android.permission.BIND_JOB_SERVICE" />-->
-
         <service
-            android:name=".SleepService"
+            android:name=".SleepJobService"
             android:enabled="true"
             android:exported="true"
-
-            />
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver
             android:name=".ScreenStatusReceiver"
@@ -65,7 +59,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.USER_PRESENT" />
                 <action android:name="android.intent.action.SCREEN_OFF" />
-
             </intent-filter>
         </receiver>
 
@@ -76,9 +69,8 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <category android:name="android.intent.category.DEFAULT" />
-
             </intent-filter>
         </receiver>
-    </application>
 
+    </application>
 </manifest>
