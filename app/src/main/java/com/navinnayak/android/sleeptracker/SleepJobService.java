@@ -59,15 +59,12 @@ public class SleepJobService extends JobService implements SensorEventListener {
         super.onStartCommand(intent, flags, startId);
         actionToPerform = intent.getExtras().getString("UserAction");
 
-
         SharedPreferences preferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         startPrefLong = preferences.getLong(START_TIME, 0);
         endPrefLong = preferences.getLong(END_TIME, 0);
 
-
 //        Log.d(TAG, "Got startTime as " + startPrefLong + " and end time as " + endPrefLong + " from Shared preferences");
 //        Log.d(TAG, actionToPerform);
-
 
         return START_NOT_STICKY;
     }
@@ -76,34 +73,26 @@ public class SleepJobService extends JobService implements SensorEventListener {
     public void onCreate() {
         super.onCreate();
         showNotification();
-
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
-
     }
 
     @Override
     public boolean onStartJob(JobParameters params) {
         Log.d(TAG, "Job started");
         doBackgroundWork(params);
-
-
         return true;
 
     }
 
-
     private void doBackgroundWork(final JobParameters params) {
 
         new Thread(new Runnable() {
-
-
             @Override
             public void run() {
 
                 calculateSleep();
-
                 if (currentTimeInMillis > actualStartMillis && currentTimeInMillis < actualEndMillis) {
                     if (!shake && !isDeviceLocked() && !isScreenOff()) {
                         threadSleep = false;
@@ -116,15 +105,10 @@ public class SleepJobService extends JobService implements SensorEventListener {
                         }
                     }
                 }
-
                 if (threadSleep) {
                     startTimeRecord();
-
-
                 }
                 endTimeRecord();
-
-
             }
         }).start();
 
@@ -134,9 +118,7 @@ public class SleepJobService extends JobService implements SensorEventListener {
 
         Log.d(TAG, "Job finished");
         jobFinished(params, false);
-
     }
-
 
     /**
      * Method which calculates sleep time.
@@ -153,43 +135,32 @@ public class SleepJobService extends JobService implements SensorEventListener {
 //        Log.d(TAG, "**" + currentTimeInMillis + "** " + actualStartMillis + " - " + actualEndMillis + ", " + startPrefLong + " - " + endPrefLong);
 
         if (currentTimeInMillis < actualStartMillis && currentTimeInMillis > actualEndMillis) {
-
             Log.d(TAG, "Service not started since its not the time to start it :P");
             stopForeground(true);
             onDestroy();
         }
     }
 
-
     public void startTimeRecord() {
         if (currentTimeInMillis > actualStartMillis && currentTimeInMillis < actualEndMillis) {
-
             if (!shake) {
                 if (isDeviceLocked() && isScreenOff()) {
-
-
                     Log.d(TAG, "Service  started  and start time ");
                     recordStartTime();
-
                 }
             }
-
-
         }
     }
 
     public void endTimeRecord() {
         if (currentTimeInMillis > actualStartMillis && currentTimeInMillis < actualEndMillis) {
-
             if (!isDeviceLocked() && !isScreenOff() && shake) {
                 threadSleep = true;
                 recordEndTime();
                 Log.d(TAG, "Service  end time ");
             }
         }
-
     }
-
 
     /**
      * Method to record Sleep Start Time
@@ -212,7 +183,6 @@ public class SleepJobService extends JobService implements SensorEventListener {
             }
         }
     }
-
 
     /**
      * Method to record Sleep End Time
@@ -253,17 +223,14 @@ public class SleepJobService extends JobService implements SensorEventListener {
         KeyguardManager keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
         if (keyguardManager.isDeviceLocked() || (actionToPerform != null && !actionToPerform.equals(ACTION_USER_PRESENT))) {
 
-            //it is locked
             Log.d(TAG, "locked with keyguard");
             return true;
 
         } else {
-            //it is not locked
             Log.d(TAG, "unlocked with keyguard");
             return false;
         }
     }
-
 
     /**
      * Method to which returns boolean value for Screen ON/OFF activity
@@ -274,7 +241,6 @@ public class SleepJobService extends JobService implements SensorEventListener {
     public boolean isScreenOff() {
         return actionToPerform.equals(Intent.ACTION_SCREEN_OFF);
     }
-
 
     @Override
     public boolean onStopJob(JobParameters params) {
@@ -294,17 +260,14 @@ public class SleepJobService extends JobService implements SensorEventListener {
                 .build();
         startForeground(NOTIFICATION_ID, notification);
 
-
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(NOTIFICATION_ID, notification);
     }
 
-
     /**
-     * //     * Method which shows notification while the service is active
-     * //     * Notifications shown for devices with Android version Oreo and above
-     * //
+     * Method which shows notification while the service is active
+     * Notifications shown for devices with Android version Oreo and above
      **/
     @Override
     @MainThread
@@ -319,9 +282,7 @@ public class SleepJobService extends JobService implements SensorEventListener {
         if (sensorManager != null) {
             sensorManager.unregisterListener(this);
         }
-
     }
-
 
     @Override
     public void onSensorChanged(SensorEvent event) {
