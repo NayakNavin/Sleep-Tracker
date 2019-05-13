@@ -13,11 +13,14 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        Log.d(TAG, "Got Action " + intent.getAction());
         if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
             Log.d(TAG, "Action performed" + intent.getAction());
         }
 
-        Intent serviceIntent = new Intent(context, SleepService.class);
+        Util.scheduleJob(context);
+
+        Intent serviceIntent = new Intent(context, SleepJobService.class);
         serviceIntent.putExtra("UserAction", intent.getAction());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -25,9 +28,5 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
         } else {
             context.startService(serviceIntent);
         }
-
-
     }
-
-
 }

@@ -8,7 +8,6 @@ import android.util.Log;
 
 import static com.navinnayak.android.sleeptracker.AppConstants.NOTIFICATION_CHANNEL_ID;
 
-
 public class App extends Application {
 
     private static final String TAG = App.class.getSimpleName();
@@ -16,7 +15,6 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         createNotificationChannel();
     }
 
@@ -25,7 +23,7 @@ public class App extends Application {
             NotificationChannel serviceChannel = new NotificationChannel(
                     NOTIFICATION_CHANNEL_ID,
                     NOTIFICATION_CHANNEL_ID,
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_LOW
             );
 
             NotificationManager manager = getSystemService(NotificationManager.class);

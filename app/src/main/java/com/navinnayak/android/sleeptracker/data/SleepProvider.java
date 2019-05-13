@@ -16,14 +16,12 @@ public class SleepProvider extends ContentProvider {
     public static final int SLEEPS = 100;
     public static final int SLEEP_ID = 101;
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    private SleepDbHelper mDbHelper;
 
     static {
         sUriMatcher.addURI(SleepContract.CONTENT_AUTHORITY, SleepContract.PATH_SLEEP, SLEEPS);
         sUriMatcher.addURI(SleepContract.CONTENT_AUTHORITY, SleepContract.PATH_SLEEP + "/#", SLEEP_ID);
     }
-
-    private SleepDbHelper mDbHelper;
-
 
     @Override
     public boolean onCreate() {
@@ -51,13 +49,10 @@ public class SleepProvider extends ContentProvider {
 
             default:
                 throw new IllegalArgumentException("Cannot query unknown Uri" + uri);
-
         }
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
-
     }
-
 
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
@@ -68,15 +63,10 @@ public class SleepProvider extends ContentProvider {
 
             default:
                 throw new IllegalArgumentException("Insertion is not supported for" + uri);
-
-
         }
-
-
     }
 
     private Uri insertSleep(Uri uri, ContentValues values) {
-
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
         long id = database.insert(SleepEntry.TABLE_NAME, null, values);
         if (id == -1) {
@@ -89,7 +79,6 @@ public class SleepProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
-
         final int match = sUriMatcher.match(uri);
         switch (match) {
 
@@ -125,8 +114,6 @@ public class SleepProvider extends ContentProvider {
                 throw new IllegalArgumentException("last updated required");
             }
         }
-
-
         if (values.size() == 0) {
             return 0;
         }
@@ -137,8 +124,6 @@ public class SleepProvider extends ContentProvider {
             getContext().getContentResolver().notifyChange(uri, null);
         }
         return rowsUpdated;
-
-
     }
 
     @Override
@@ -147,28 +132,28 @@ public class SleepProvider extends ContentProvider {
         int rowsDeleted;
         final int match = sUriMatcher.match(uri);
         switch (match) {
+
             case SLEEPS:
                 rowsDeleted = database.delete(SleepEntry.TABLE_NAME, selection, selectionArgs);
                 break;
+
             case SLEEP_ID:
                 selection = SleepEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 rowsDeleted = database.delete(SleepEntry.TABLE_NAME, selection, selectionArgs);
                 break;
+
             default:
                 throw new IllegalArgumentException("Deletion is not supported for" + uri);
         }
         if (rowsDeleted != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
-
         return rowsDeleted;
-
     }
 
     @Override
     public String getType(Uri uri) {
-
         final int match = sUriMatcher.match(uri);
         switch (match) {
 

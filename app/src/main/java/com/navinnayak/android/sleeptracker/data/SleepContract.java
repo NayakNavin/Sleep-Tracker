@@ -24,9 +24,5 @@ public final class SleepContract {
         public static final String COLUMN_SLEEP_START_TIME = "start_time";
         public static final String COLUMN_SLEEP_END_TIME = "end_time";
         public static final String COLUMN_LAST_UPDATED = "last_updated";
-
-
     }
-
-
 }
