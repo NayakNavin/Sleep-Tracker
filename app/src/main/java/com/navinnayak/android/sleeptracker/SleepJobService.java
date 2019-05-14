@@ -153,12 +153,13 @@ public class SleepJobService extends JobService implements SensorEventListener {
     }
 
     public void endTimeRecord() {
-        if (currentTimeInMillis > actualStartMillis && currentTimeInMillis < actualEndMillis) {
+        if (currentTimeInMillis > actualStartMillis && currentTimeInMillis < actualEndMillis + (1 * 60 * 60 * 1000)) {
             if (!isDeviceLocked() && !isScreenOff() && shake) {
                 threadSleep = true;
                 recordEndTime();
                 Log.d(TAG, "Service  end time ");
             }
+
         }
     }
 

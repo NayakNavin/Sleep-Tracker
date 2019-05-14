@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         ListView sleepLV = findViewById(R.id.list);
         mCursorAdapter = new SleepCursorAdapter(this, null);
         sleepLV.setAdapter(mCursorAdapter);
+
         getSupportLoaderManager().initLoader(0, null, this);
     }
 

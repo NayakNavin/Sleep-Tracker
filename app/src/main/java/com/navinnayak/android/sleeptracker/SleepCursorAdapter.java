@@ -33,12 +33,12 @@ public class SleepCursorAdapter extends CursorAdapter {
         int startColumnIndex = cursor.getColumnIndex(SleepEntry.COLUMN_SLEEP_START_TIME);
         long startDate = cursor.getLong(startColumnIndex);
 
-        startTextView.setText(getDate(startDate, "HH:mm:ss MMM dd EEE, yyyy "));
+        startTextView.setText(getDate(startDate, "HH:mm, MMM dd EEE, yyyy "));
 
 
         int endColumnIndex = cursor.getColumnIndex(SleepEntry.COLUMN_SLEEP_END_TIME);
         long endDate = cursor.getLong(endColumnIndex);
 
-        endTextView.setText(getDate(endDate, "HH:mm:ss MMM dd EEE, yyyy "));
+        endTextView.setText(getDate(endDate, "HH:mm, MMM dd EEE, yyyy "));
     }
 }
