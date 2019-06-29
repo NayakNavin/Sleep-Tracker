@@ -1,4 +1,4 @@
-package com.navinnayak.android.sleeptracker;
+package com.navinnayak.android.sleeptracker.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -11,6 +11,10 @@ import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import com.navinnayak.android.sleeptracker.R;
+import com.navinnayak.android.sleeptracker.activity.MainActivity;
+import com.navinnayak.android.sleeptracker.receiver.ScreenStatusReceiver;
 
 import static com.navinnayak.android.sleeptracker.AppConstants.NOTIFICATION_CHANNEL_ID;
 import static com.navinnayak.android.sleeptracker.AppConstants.NOTIFICATION_ID;

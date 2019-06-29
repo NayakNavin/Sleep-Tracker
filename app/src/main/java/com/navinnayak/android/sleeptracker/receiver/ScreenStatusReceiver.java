@@ -1,10 +1,13 @@
-package com.navinnayak.android.sleeptracker;
+package com.navinnayak.android.sleeptracker.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
+
+import com.navinnayak.android.sleeptracker.service.SleepJobService;
+import com.navinnayak.android.sleeptracker.util.Util;
 
 
 public class ScreenStatusReceiver extends BroadcastReceiver {

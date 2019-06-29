@@ -1,4 +1,4 @@
-package com.navinnayak.android.sleeptracker;
+package com.navinnayak.android.sleeptracker.adaptor;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,9 +8,10 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import com.navinnayak.android.sleeptracker.R;
 import com.navinnayak.android.sleeptracker.data.SleepContract.SleepEntry;
 
-import static com.navinnayak.android.sleeptracker.Util.getDate;
+import static com.navinnayak.android.sleeptracker.util.Util.getDate;
 
 public class SleepCursorAdapter extends CursorAdapter {
 

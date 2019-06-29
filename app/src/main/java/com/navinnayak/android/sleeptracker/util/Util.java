@@ -1,4 +1,4 @@
-package com.navinnayak.android.sleeptracker;
+package com.navinnayak.android.sleeptracker.util;
 
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
@@ -8,6 +8,8 @@ import android.icu.util.Calendar;
 import android.icu.util.TimeZone;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
+import com.navinnayak.android.sleeptracker.service.SleepJobService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -1,4 +1,4 @@
-package com.navinnayak.android.sleeptracker;
+package com.navinnayak.android.sleeptracker.service;
 
 import android.app.KeyguardManager;
 import android.app.Notification;
@@ -21,17 +21,19 @@ import android.support.annotation.MainThread;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.navinnayak.android.sleeptracker.R;
+import com.navinnayak.android.sleeptracker.activity.MainActivity;
 import com.navinnayak.android.sleeptracker.data.SleepContract;
 import com.navinnayak.android.sleeptracker.data.SleepContract.SleepEntry;
 
 import static android.content.Intent.ACTION_USER_PRESENT;
 import static com.navinnayak.android.sleeptracker.AppConstants.NOTIFICATION_CHANNEL_ID;
 import static com.navinnayak.android.sleeptracker.AppConstants.NOTIFICATION_ID;
-import static com.navinnayak.android.sleeptracker.SetTargetActivity.END_TIME;
-import static com.navinnayak.android.sleeptracker.SetTargetActivity.SHARED_PREF;
-import static com.navinnayak.android.sleeptracker.SetTargetActivity.START_TIME;
-import static com.navinnayak.android.sleeptracker.Util.getMillisOfDate;
+import static com.navinnayak.android.sleeptracker.activity.SetTargetActivity.END_TIME;
+import static com.navinnayak.android.sleeptracker.activity.SetTargetActivity.SHARED_PREF;
+import static com.navinnayak.android.sleeptracker.activity.SetTargetActivity.START_TIME;
 import static com.navinnayak.android.sleeptracker.data.SleepContract.BASE_CONTENT_URI;
+import static com.navinnayak.android.sleeptracker.util.Util.getMillisOfDate;
 
 public class SleepJobService extends JobService implements SensorEventListener {
 

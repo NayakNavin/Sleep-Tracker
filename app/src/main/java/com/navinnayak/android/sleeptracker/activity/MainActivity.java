@@ -1,4 +1,4 @@
-package com.navinnayak.android.sleeptracker;
+package com.navinnayak.android.sleeptracker.activity;
 
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -14,7 +14,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.navinnayak.android.sleeptracker.R;
+import com.navinnayak.android.sleeptracker.adaptor.SleepCursorAdapter;
 import com.navinnayak.android.sleeptracker.data.SleepContract.SleepEntry;
+import com.navinnayak.android.sleeptracker.receiver.ScreenStatusReceiver;
+import com.navinnayak.android.sleeptracker.service.StartBroadcastService;
 
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {

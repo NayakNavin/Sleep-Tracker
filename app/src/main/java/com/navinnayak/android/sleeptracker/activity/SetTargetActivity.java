@@ -1,4 +1,4 @@
-package com.navinnayak.android.sleeptracker;
+package com.navinnayak.android.sleeptracker.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,9 +10,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.navinnayak.android.sleeptracker.R;
 import com.yinglan.circleviewlibrary.CircleAlarmTimerView;
 
-import static com.navinnayak.android.sleeptracker.Util.getDate;
+import static com.navinnayak.android.sleeptracker.util.Util.getDate;
 
 public class SetTargetActivity extends AppCompatActivity {
 
